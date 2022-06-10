@@ -32,24 +32,14 @@ export GIT_PROTOCOL_FROM_USER
 command=
 branch=
 force=
-reference=
 cached=
 recursive=
-init=
-require_init=
 files=
-remote=
-nofetch=
-update=
 prefix=
 custom_name=
 depth=
 progress=
 dissociate=
-single_branch=
-jobs=
-recommend_shallow=
-filter=
 
 isnumber()
 {
@@ -246,129 +236,8 @@ cmd_deinit()
 #
 cmd_update()
 {
-	# parse $args after "submodule ... update".
-	while test $# -ne 0
-	do
-		case "$1" in
-		-q|--quiet)
-			GIT_QUIET=1
-			;;
-		-v)
-			unset GIT_QUIET
-			;;
-		--progress)
-			progress=1
-			;;
-		-i|--init)
-			init=1
-			;;
-		--require-init)
-			init=1
-			require_init=1
-			;;
-		--remote)
-			remote=1
-			;;
-		-N|--no-fetch)
-			nofetch=1
-			;;
-		-f|--force)
-			force=$1
-			;;
-		-r|--rebase)
-			update="rebase"
-			;;
-		--reference)
-			case "$2" in '') usage ;; esac
-			reference="--reference=$2"
-			shift
-			;;
-		--reference=*)
-			reference="$1"
-			;;
-		--dissociate)
-			dissociate=1
-			;;
-		-m|--merge)
-			update="merge"
-			;;
-		--recursive)
-			recursive=1
-			;;
-		--checkout)
-			update="checkout"
-			;;
-		--recommend-shallow)
-			recommend_shallow="--recommend-shallow"
-			;;
-		--no-recommend-shallow)
-			recommend_shallow="--no-recommend-shallow"
-			;;
-		--depth)
-			case "$2" in '') usage ;; esac
-			depth="--depth=$2"
-			shift
-			;;
-		--depth=*)
-			depth=$1
-			;;
-		-j|--jobs)
-			case "$2" in '') usage ;; esac
-			jobs="--jobs=$2"
-			shift
-			;;
-		--jobs=*)
-			jobs=$1
-			;;
-		--single-branch)
-			single_branch="--single-branch"
-			;;
-		--no-single-branch)
-			single_branch="--no-single-branch"
-			;;
-		--filter)
-			case "$2" in '') usage ;; esac
-			filter="--filter=$2"
-			shift
-			;;
-		--filter=*)
-			filter="$1"
-			;;
-		--)
-			shift
-			break
-			;;
-		-*)
-			usage
-			;;
-		*)
-			break
-			;;
-		esac
-		shift
-	done
-
 	git ${wt_prefix:+-C "$wt_prefix"} submodule--helper update \
-		${GIT_QUIET:+--quiet} \
-		${force:+--force} \
-		${progress:+"--progress"} \
-		${remote:+--remote} \
-		${recursive:+--recursive} \
-		${init:+--init} \
-		${nofetch:+--no-fetch} \
 		${wt_prefix:+--prefix "$wt_prefix"} \
-		${prefix:+--recursive-prefix "$prefix"} \
-		${update:+--update "$update"} \
-		${reference:+"$reference"} \
-		${dissociate:+"--dissociate"} \
-		${depth:+"$depth"} \
-		${require_init:+--require-init} \
-		${dissociate:+"--dissociate"} \
-		$single_branch \
-		$recommend_shallow \
-		$jobs \
-		$filter \
-		-- \
 		"$@"
 }
 
